@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Caveat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;}
+  body{margin:0;background:#07090B;color:#EAF1ED;font-family:'Space Grotesk',system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+  ::selection{background:#5EE6A0;color:#07090B;}
+
+  @keyframes drift{0%,100%{transform:translate(0,0) rotate(var(--rot,0deg));}50%{transform:translate(0,-16px) rotate(var(--rot,0deg));}}
+  @keyframes drift2{0%,100%{transform:translate(0,0) rotate(var(--rot,0deg));}50%{transform:translate(10px,12px) rotate(var(--rot,0deg));}}
+  @keyframes floaty{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+  @keyframes blink{0%,100%{opacity:1;}50%{opacity:.25;}}
+  @keyframes glowPulse{0%,100%{opacity:.5;transform:scale(1);}50%{opacity:.9;transform:scale(1.12);}}
+  @keyframes orbit{to{transform:rotate(360deg);}}
+  @keyframes corePulse{0%,100%{box-shadow:0 0 0 0 rgba(94,230,160,.12),inset 0 0 30px -8px rgba(94,230,160,.25);}50%{box-shadow:0 0 50px 2px rgba(94,230,160,.22),inset 0 0 30px -8px rgba(94,230,160,.45);}}
+  @keyframes nodePulse{0%,9%{border-color:rgba(94,230,160,.9);box-shadow:0 0 24px -2px rgba(94,230,160,.6);color:#EAF1ED;}26%,100%{border-color:rgba(255,255,255,.1);box-shadow:0 0 0 0 transparent;color:#9aa8a2;}}
+  @keyframes ripple{0%{transform:scale(.7);opacity:.65;}100%{transform:scale(2.4);opacity:0;}}
+  @keyframes dash{from{stroke-dashoffset:520;}to{stroke-dashoffset:0;}}
+  @keyframes hintPulse{0%,100%{opacity:.55;}50%{opacity:1;}}
+
+  /* ---- reveal state (JS toggles #pl-stage.revealed) ---- */
+  #pl-stage.revealed .noise-layer{opacity:0!important;filter:blur(18px);transform:scale(1.07);pointer-events:none;}
+  #pl-stage.revealed .power-layer{opacity:1!important;pointer-events:auto!important;}
+  #pl-stage.revealed .widget{opacity:1!important;transform:none!important;}
+
+  .nomore:hover{transform:translateX(-50%) translateY(-4px);border-color:rgba(94,230,160,.6);background:rgba(94,230,160,.08);box-shadow:0 0 38px -8px rgba(94,230,160,.55);}
+  .backbtn:hover{border-color:rgba(94,230,160,.5);background:rgba(94,230,160,.07);color:#EAF1ED;}
+
+  @media(max-width:760px){
+    .nomore{bottom:28px!important;}
+    .doodle.hide-sm{display:none;}
+    .feature-tile{flex-direction:column!important;}
+  }
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;}
+    #pl-stage.revealed .noise-layer{filter:none;transform:none;}
+    .noise-layer,.power-layer,.widget{transition:opacity .2s linear!important;}
+  }
+</style>
+</helmet>
+
+<div id="pl-stage" style="position:relative;width:100%;min-height:100vh;overflow:hidden;background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px);background-size:30px 30px;">
+
+  <!-- ============ NOISE LAYER (front page) ============ -->
+  <div class="noise-layer" style="position:absolute;inset:0;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px;transition:opacity .85s cubic-bezier(.22,1,.36,1),filter .85s cubic-bezier(.22,1,.36,1),transform .85s cubic-bezier(.22,1,.36,1);">
+
+    <!-- soft moving glows -->
+    <div style="position:absolute;top:8%;left:14%;width:42vw;height:42vw;max-width:560px;max-height:560px;border-radius:50%;background:radial-gradient(circle,rgba(94,230,160,.14),transparent 70%);filter:blur(6px);animation:glowPulse 11s ease-in-out infinite;pointer-events:none;"></div>
+    <div style="position:absolute;bottom:6%;right:12%;width:40vw;height:40vw;max-width:520px;max-height:520px;border-radius:50%;background:radial-gradient(circle,rgba(37,232,214,.11),transparent 70%);filter:blur(6px);animation:glowPulse 13s ease-in-out infinite;animation-delay:-4s;pointer-events:none;"></div>
+
+    <!-- doodle field (the chaos businesses juggle) -->
+    <div style="position:absolute;inset:0;font-family:'Caveat',cursive;pointer-events:none;overflow:hidden;">
+      <span class="doodle" style="position:absolute;left:7%;top:16%;font-size:38px;--rot:-7deg;transform:rotate(-7deg);color:rgba(234,241,237,.4);filter:blur(1.6px);animation:drift 9s ease-in-out infinite;animation-delay:-1s;">hire an SEO agency</span>
+      <span class="doodle" style="position:absolute;left:62%;top:11%;font-size:44px;--rot:5deg;transform:rotate(5deg);color:rgba(94,230,160,.45);filter:blur(1.4px);animation:drift2 11s ease-in-out infinite;">find a writer</span>
+      <span class="doodle hide-sm" style="position:absolute;left:78%;top:30%;font-size:32px;--rot:9deg;transform:rotate(9deg);color:rgba(234,241,237,.3);filter:blur(2.4px);animation:drift 10s ease-in-out infinite;animation-delay:-3s;">backlinks?</span>
+      <span class="doodle" style="position:absolute;left:11%;top:40%;font-size:30px;--rot:6deg;transform:rotate(6deg);color:rgba(234,241,237,.28);filter:blur(2.8px);animation:drift2 12s ease-in-out infinite;animation-delay:-2s;">keywords</span>
+      <span class="doodle" style="position:absolute;left:70%;top:46%;font-size:40px;--rot:-6deg;transform:rotate(-6deg);color:rgba(234,241,237,.34);filter:blur(2px);animation:drift 13s ease-in-out infinite;animation-delay:-5s;">blog every week??</span>
+      <span class="doodle hide-sm" style="position:absolute;left:4%;top:62%;font-size:34px;--rot:-4deg;transform:rotate(-4deg);color:rgba(94,230,160,.34);filter:blur(2.2px);animation:drift 10.5s ease-in-out infinite;animation-delay:-1.5s;">what's GEO?</span>
+      <span class="doodle" style="position:absolute;left:30%;top:73%;font-size:46px;--rot:3deg;transform:rotate(3deg);color:rgba(234,241,237,.36);filter:blur(1.6px);animation:drift2 12.5s ease-in-out infinite;animation-delay:-4s;">where's my traffic?</span>
+      <span class="doodle hide-sm" style="position:absolute;left:74%;top:69%;font-size:33px;--rot:7deg;transform:rotate(7deg);color:rgba(234,241,237,.3);filter:blur(2.6px);animation:drift 11.5s ease-in-out infinite;animation-delay:-6s;">structured data</span>
+      <span class="doodle" style="position:absolute;left:16%;top:85%;font-size:30px;--rot:-8deg;transform:rotate(-8deg);color:rgba(234,241,237,.26);filter:blur(3px);animation:drift2 13.5s ease-in-out infinite;animation-delay:-2.5s;">another invoice</span>
+      <span class="doodle hide-sm" style="position:absolute;left:55%;top:86%;font-size:36px;--rot:5deg;transform:rotate(5deg);color:rgba(94,230,160,.3);filter:blur(2.4px);animation:drift 12s ease-in-out infinite;animation-delay:-3.5s;">AEO??</span>
+      <span class="doodle hide-sm" style="position:absolute;left:84%;top:54%;font-size:29px;--rot:-5deg;transform:rotate(-5deg);color:rgba(234,241,237,.26);filter:blur(2.8px);animation:drift2 10s ease-in-out infinite;animation-delay:-1s;">schema markup</span>
+      <span class="doodle" style="position:absolute;left:40%;top:8%;font-size:34px;--rot:-3deg;transform:rotate(-3deg);color:rgba(234,241,237,.3);filter:blur(2.4px);animation:drift 11s ease-in-out infinite;animation-delay:-5.5s;">redesign the site</span>
+      <span class="doodle hide-sm" style="position:absolute;left:2%;top:30%;font-size:28px;--rot:8deg;transform:rotate(8deg);color:rgba(234,241,237,.24);filter:blur(3.2px);animation:drift2 12s ease-in-out infinite;animation-delay:-2s;">page speed</span>
+      <span class="doodle hide-sm" style="position:absolute;left:88%;top:18%;font-size:30px;--rot:-9deg;transform:rotate(-9deg);color:rgba(234,241,237,.26);filter:blur(2.8px);animation:drift 13s ease-in-out infinite;animation-delay:-4.5s;">Google update again</span>
+      <span class="doodle" style="position:absolute;left:24%;top:54%;font-size:31px;--rot:4deg;transform:rotate(4deg);color:rgba(234,241,237,.22);filter:blur(3px);animation:drift2 11s ease-in-out infinite;animation-delay:-6s;">publish… publish…</span>
+      <span class="doodle hide-sm" style="position:absolute;left:60%;top:62%;font-size:27px;--rot:-6deg;transform:rotate(-6deg);color:rgba(234,241,237,.22);filter:blur(3.2px);animation:drift 10s ease-in-out infinite;animation-delay:-3s;">rankings dropped</span>
+      <span class="doodle hide-sm" style="position:absolute;left:46%;top:40%;font-size:26px;--rot:7deg;transform:rotate(7deg);color:rgba(234,241,237,.16);filter:blur(3.6px);animation:drift2 14s ease-in-out infinite;animation-delay:-1s;">meta descriptions</span>
+      <span class="doodle hide-sm" style="position:absolute;left:33%;top:26%;font-size:28px;--rot:-5deg;transform:rotate(-5deg);color:rgba(234,241,237,.18);filter:blur(3.4px);animation:drift 12s ease-in-out infinite;animation-delay:-5s;">content calendar</span>
+    </div>
+
+    <!-- floating particles -->
+    <div style="position:absolute;inset:0;pointer-events:none;">
+      <span style="position:absolute;left:20%;top:25%;width:5px;height:5px;border-radius:50%;background:#5EE6A0;box-shadow:0 0 10px 2px rgba(94,230,160,.8);animation:floaty 7s ease-in-out infinite,blink 4s ease-in-out infinite;"></span>
+      <span style="position:absolute;left:80%;top:40%;width:4px;height:4px;border-radius:50%;background:#25E8D6;box-shadow:0 0 9px 2px rgba(37,232,214,.8);animation:floaty 9s ease-in-out infinite,blink 5s ease-in-out infinite;animation-delay:-2s;"></span>
+      <span style="position:absolute;left:65%;top:78%;width:5px;height:5px;border-radius:50%;background:#5EE6A0;box-shadow:0 0 10px 2px rgba(94,230,160,.8);animation:floaty 8s ease-in-out infinite,blink 6s ease-in-out infinite;animation-delay:-3s;"></span>
+      <span style="position:absolute;left:35%;top:65%;width:3px;height:3px;border-radius:50%;background:#EAF1ED;box-shadow:0 0 8px 2px rgba(234,241,237,.6);animation:floaty 10s ease-in-out infinite;animation-delay:-1s;"></span>
+      <span style="position:absolute;left:50%;top:18%;width:4px;height:4px;border-radius:50%;background:#5EE6A0;box-shadow:0 0 9px 2px rgba(94,230,160,.7);animation:floaty 7.5s ease-in-out infinite,blink 4.5s ease-in-out infinite;animation-delay:-4s;"></span>
+      <span style="position:absolute;left:88%;top:66%;width:3px;height:3px;border-radius:50%;background:#25E8D6;box-shadow:0 0 8px 2px rgba(37,232,214,.7);animation:floaty 9.5s ease-in-out infinite;animation-delay:-2.5s;"></span>
+    </div>
+
+    <!-- THE one thing: Polilabs -->
+    <div style="position:relative;z-index:5;display:flex;flex-direction:column;align-items:center;">
+      <h1 style="font-size:clamp(58px,13vw,184px);font-weight:600;letter-spacing:-0.045em;line-height:.92;margin:0;color:#EAF1ED;text-shadow:0 0 70px rgba(94,230,160,.3);">POLI<span style="background:linear-gradient(115deg,#5EE6A0,#25E8D6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;">LABS</span></h1>
+      <p style="margin:22px 0 0;font-family:'JetBrains Mono',monospace;font-size:clamp(11px,1.4vw,14px);letter-spacing:.22em;text-transform:uppercase;color:#7A857F;">The AI growth engine</p>
+    </div>
+
+    <!-- the only affordance: No more -->
+    <button class="nomore" onClick="{{ reveal }}" style="position:absolute;bottom:clamp(28px,6vh,64px);left:50%;transform:translateX(-50%);z-index:6;display:flex;flex-direction:column;align-items:flex-start;gap:4px;cursor:pointer;background:rgba(14,20,23,.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(94,230,160,.3);border-radius:16px;padding:16px 20px;text-align:left;transition:transform .3s cubic-bezier(.34,1.56,.64,1),border-color .3s ease,background .3s ease,box-shadow .3s ease;">
+      <span style="display:flex;align-items:center;gap:8px;font-size:22px;font-weight:600;letter-spacing:-0.02em;color:#EAF1ED;">No more.<span style="color:#5EE6A0;font-size:18px;">→</span></span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#7A857F;animation:hintPulse 3s ease-in-out infinite;">of juggling it all</span>
+    </button>
+  </div>
+
+  <!-- ============ POWER LAYER (revealed) ============ -->
+  <div class="power-layer" style="position:absolute;inset:0;z-index:2;opacity:0;pointer-events:none;overflow-y:auto;transition:opacity .7s cubic-bezier(.22,1,.36,1);background-image:radial-gradient(rgba(94,230,160,.05) 1px,transparent 1px);background-size:30px 30px;background-color:#07090B;">
+    <div style="max-width:1140px;margin:0 auto;padding:clamp(28px,5vw,56px) clamp(20px,5vw,48px) 72px;">
+
+      <!-- header: only the mark + a way back. no nav. -->
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:clamp(36px,6vw,64px);">
+        <span style="display:flex;align-items:center;gap:10px;">
+          <span style="position:relative;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;flex:none;">
+            <span style="position:absolute;inset:0;border-radius:50%;border:1.5px solid rgba(94,230,160,.45);"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:linear-gradient(120deg,#5EE6A0,#25E8D6);"></span>
+          </span>
+          <span style="font-size:17px;font-weight:600;letter-spacing:-0.02em;">Poli<span style="color:#98A6A0;">labs</span></span>
+        </span>
+        <button class="backbtn" onClick="{{ back }}" style="cursor:pointer;display:inline-flex;align-items:center;gap:8px;background:transparent;border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:9px 16px;color:#98A6A0;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.06em;transition:border-color .25s ease,background .25s ease,color .25s ease;">← back to the noise</button>
+      </div>
+
+      <!-- heading -->
+      <div class="widget" style="opacity:0;transform:translateY(24px) scale(.96);transition:opacity .55s ease,transform .6s cubic-bezier(.34,1.56,.64,1);transition-delay:.05s;max-width:760px;margin-bottom:clamp(28px,4vw,44px);">
+        <div style="display:inline-flex;align-items:center;gap:9px;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#5EE6A0;margin-bottom:18px;"><span style="width:6px;height:6px;border-radius:50%;background:#5EE6A0;box-shadow:0 0 9px 1px rgba(94,230,160,.9);animation:blink 2.2s ease-in-out infinite;"></span>One engine, instead</div>
+        <h2 style="font-size:clamp(32px,5.4vw,64px);font-weight:500;letter-spacing:-0.035em;line-height:1.02;margin:0 0 16px;">The <span style="background:linear-gradient(115deg,#5EE6A0,#25E8D6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;">power</span> of what we do.</h2>
+        <p style="font-size:clamp(16px,1.6vw,20px);line-height:1.55;color:#98A6A0;margin:0;max-width:600px;">Everything that used to be scattered across agencies, writers, and developers — research, writing, publishing, and measurement — running as one continuous engine.</p>
+      </div>
+
+      <!-- FEATURE: the Living Website loop (your screenshot) -->
+      <div class="feature-tile widget" style="opacity:0;transform:translateY(24px) scale(.96);transition:opacity .55s ease,transform .6s cubic-bezier(.34,1.56,.64,1);transition-delay:.13s;display:flex;gap:clamp(24px,4vw,56px);align-items:center;background:linear-gradient(160deg,#0E1417,#0A0D10);border:1px solid rgba(94,230,160,.22);border-radius:24px;padding:clamp(26px,4vw,48px);margin-bottom:18px;overflow:hidden;">
+        <div style="flex:1 1 280px;min-width:0;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#5EE6A0;margin-bottom:16px;">The Living Website</div>
+          <h3 style="font-size:clamp(24px,3vw,38px);font-weight:500;letter-spacing:-0.03em;line-height:1.06;margin:0 0 14px;">A website that never sits still.</h3>
+          <p style="font-size:clamp(15px,1.4vw,17.5px);line-height:1.55;color:#98A6A0;margin:0;">It researches what's ranking, writes new content to match, publishes it, and measures the result — then starts again. A growth loop that runs on its own.</p>
+        </div>
+        <!-- the loop -->
+        <div style="flex:none;position:relative;width:min(380px,80vw);aspect-ratio:1;">
+          <div style="position:absolute;inset:11%;border-radius:50%;border:1px dashed rgba(94,230,160,.28);"></div>
+          <div style="position:absolute;inset:11%;border-radius:50%;background:conic-gradient(from -90deg,rgba(94,230,160,0) 0deg,rgba(94,230,160,.22) 55deg,rgba(37,232,214,0) 120deg);animation:orbit 14s linear infinite;"></div>
+          <div style="position:absolute;inset:11%;animation:orbit 14s linear infinite;">
+            <div style="position:absolute;top:-7px;left:50%;transform:translateX(-50%);width:14px;height:14px;border-radius:50%;background:#5EE6A0;box-shadow:0 0 18px 5px rgba(94,230,160,.8);"></div>
+          </div>
+          <div style="position:absolute;inset:34%;border-radius:50%;background:radial-gradient(circle,#11211A,#0A0F12);border:1px solid rgba(94,230,160,.3);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;animation:corePulse 4s ease-in-out infinite;">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#5EE6A0;">Living</span>
+            <span style="font-size:clamp(13px,2vw,17px);font-weight:600;letter-spacing:-0.01em;">Website</span>
+          </div>
+          <div style="position:absolute;top:11%;left:50%;transform:translate(-50%,-50%);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:#0E1316;border:1px solid rgba(255,255,255,.1);border-radius:999px;padding:8px 14px;white-space:nowrap;animation:nodePulse 14s linear infinite;">Research</div>
+          <div style="position:absolute;top:50%;left:89%;transform:translate(-50%,-50%);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:#0E1316;border:1px solid rgba(255,255,255,.1);border-radius:999px;padding:8px 14px;white-space:nowrap;animation:nodePulse 14s linear infinite;animation-delay:-3.5s;">Write</div>
+          <div style="position:absolute;top:89%;left:50%;transform:translate(-50%,-50%);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:#0E1316;border:1px solid rgba(255,255,255,.1);border-radius:999px;padding:8px 14px;white-space:nowrap;animation:nodePulse 14s linear infinite;animation-delay:-7s;">Publish</div>
+          <div style="position:absolute;top:50%;left:11%;transform:translate(-50%,-50%);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:#0E1316;border:1px solid rgba(255,255,255,.1);border-radius:999px;padding:8px 14px;white-space:nowrap;animation:nodePulse 14s linear infinite;animation-delay:-10.5s;">Measure</div>
+        </div>
+      </div>
+
+      <!-- WIDGET CASCADE -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;">
+
+        <div class="widget" style="opacity:0;transform:translateY(24px) scale(.96);transition:opacity .55s ease,transform .6s cubic-bezier(.34,1.56,.64,1);transition-delay:.2s;background:#0E1316;border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:22px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;"><span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#7A857F;">Visibility</span><span style="font-size:13px;color:#5EE6A0;font-weight:500;">↑ climbing</span></div>
+          <svg viewBox="0 0 240 90" style="width:100%;height:auto;display:block;" aria-hidden="true">
+            <defs><linearGradient id="hg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5EE6A0" stop-opacity="0.28"></stop><stop offset="1" stop-color="#5EE6A0" stop-opacity="0"></stop></linearGradient><linearGradient id="hg2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#5EE6A0"></stop><stop offset="1" stop-color="#25E8D6"></stop></linearGradient></defs>
+            <path d="M0,78 C36,72 52,64 80,54 C108,44 124,30 156,24 C188,18 212,12 240,6 L240,90 L0,90 Z" fill="url(#hg1)"></path>
+            <path d="M0,78 C36,72 52,64 80,54 C108,44 124,30 156,24 C188,18 212,12 240,6" fill="none" stroke="url(#hg2)" stroke-width="2.5" stroke-linecap="round"></path>
+            <circle cx="240" cy="6" r="4" fill="#5EE6A0"></circle>
+          </svg>
+        </div>
+
+        <div class="widget" style="opacity:0;transform:translateY(24px) scale(.96);transition:opacity .55s ease,transform .6s cubic-bezier(.34,1.56,.64,1);transition-delay:.27s;background:#0E1316;border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:22px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#7A857F;">Search coverage</span>
+          <div style="display:flex;flex-direction:column;gap:13px;margin-top:16px;">
+            <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px;"><span style="color:#B8C4BE;">SEO</span><span style="color:#5EE6A0;font-family:'JetBrains Mono',monospace;">94</span></div><div style="height:6px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden;"><div style="width:94%;height:100%;background:linear-gradient(90deg,#5EE6A0,#25E8D6);"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px;"><span style="color:#B8C4BE;">AEO</span><span style="color:#5EE6A0;font-family:'JetBrains Mono',monospace;">88</span></div><div style="height:6px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden;"><div style="width:88%;height:100%;background:linear-gradient(90deg,#5EE6A0,#25E8D6);"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px;"><span style="color:#B8C4BE;">GEO</span><span style="color:#5EE6A0;font-family:'JetBrains Mono',monospace;">91</span></div><div style="height:6px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden;"><div style="width:91%;height:100%;background:linear-gradient(90deg,#5EE6A0,#25E8D6);"></div></div></div>
+          </div>
+        </div>
+
+        <div class="widget" style="opacity:0;transform:translateY(24px) scale(.96);transition:opacity .55s ease,transform .6s cubic-bezier(.34,1.56,.64,1);transition-delay:.34s;background:#0E1316;border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:22px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#7A857F;">Rankings</span>
+          <div style="display:flex;flex-direction:column;gap:11px;margin-top:16px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;font-size:13.5px;"><span style="color:#EAF1ED;display:flex;gap:9px;"><span style="font-family:'JetBrains Mono',monospace;color:#5EE6A0;">#1</span>best craft soda</span><span style="color:#5EE6A0;font-size:12px;">↑3</span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;font-size:13.5px;"><span style="color:#EAF1ED;display:flex;gap:9px;"><span style="font-family:'JetBrains Mono',monospace;color:#5EE6A0;">#2</span>low-sugar drinks</span><span style="color:#5EE6A0;font-size:12px;">↑5</span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;font-size:13.5px;"><span style="color:#98A6A0;display:flex;gap:9px;"><span style="font-family:'JetBrains Mono',monospace;color:#7A857F;">#4</span>natural energy</span><span style="color:#5EE6A0;font-size:12px;">↑2</span></div>
+          </div>
+        </div>
+
+        <div class="widget" style="opacity:0;transform:translateY(24px) scale(.96);transition:opacity .55s ease,transform .6s cubic-bezier(.34,1.56,.64,1);transition-delay:.41s;background:#0E1316;border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:22px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#7A857F;">Just published</span>
+          <div style="display:flex;align-items:flex-start;gap:12px;margin-top:16px;">
+            <span style="width:24px;height:24px;border-radius:7px;background:linear-gradient(120deg,#5EE6A0,#25E8D6);display:inline-flex;align-items:center;justify-content:center;color:#06231A;font-weight:700;font-size:13px;flex:none;">✓</span>
+            <div><div style="font-size:14.5px;font-weight:500;line-height:1.35;margin-bottom:4px;">12 F&amp;B flavor trends for 2026</div><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#7A857F;">1,480 words · schema attached</div></div>
+          </div>
+        </div>
+
+        <div class="widget" style="opacity:0;transform:translateY(24px) scale(.96);transition:opacity .55s ease,transform .6s cubic-bezier(.34,1.56,.64,1);transition-delay:.48s;background:#0B0E11;border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:22px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#7A857F;">Structured data</span>
+          <pre style="margin:14px 0 0;font-family:'JetBrains Mono',monospace;font-size:11.5px;line-height:1.6;color:#B8C4BE;white-space:pre-wrap;word-break:break-word;">{
+  <span style="color:#5EE6A0;">"@type"</span>: <span style="color:#25E8D6;">"Product"</span>,
+  <span style="color:#5EE6A0;">"brand"</span>: <span style="color:#25E8D6;">"Polilabs"</span>,
+  <span style="color:#5EE6A0;">"rating"</span>: <span style="color:#25E8D6;">4.9</span>
+}</pre>
+        </div>
+
+        <div class="widget" style="opacity:0;transform:translateY(24px) scale(.96);transition:opacity .55s ease,transform .6s cubic-bezier(.34,1.56,.64,1);transition-delay:.55s;background:linear-gradient(160deg,rgba(94,230,160,.08),rgba(37,232,214,.03));border:1px solid rgba(94,230,160,.22);border-radius:18px;padding:22px;display:flex;flex-direction:column;justify-content:center;">
+          <div style="font-size:clamp(34px,4vw,46px);font-weight:600;letter-spacing:-0.03em;line-height:1;background:linear-gradient(115deg,#5EE6A0,#25E8D6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;">+148</div>
+          <div style="font-size:13.5px;color:#B8C4BE;margin-top:8px;line-height:1.4;">new keywords tracked and targeted this month</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:860}}">
+class Component extends DCLogic {
+  reveal = () => {
+    const s = document.getElementById('pl-stage');
+    if (!s) return;
+    s.classList.add('revealed');
+    const p = s.querySelector('.power-layer');
+    if (p) p.scrollTop = 0;
+  };
+
+  back = () => {
+    const s = document.getElementById('pl-stage');
+    if (s) s.classList.remove('revealed');
+  };
+
+  componentDidMount() {
+    this._onKey = (e) => { if (e.key === 'Escape') this.back(); };
+    window.addEventListener('keydown', this._onKey);
+  }
+
+  componentWillUnmount() {
+    if (this._onKey) window.removeEventListener('keydown', this._onKey);
+  }
+
+  renderVals() {
+    return { reveal: this.reveal, back: this.back };
+  }
+}
+</script>
+</body>
+</html>
